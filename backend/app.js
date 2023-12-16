@@ -3,11 +3,13 @@ const express = require("express");
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
+
 const cors = require('cors');
 const csurf = require('csurf');
 const debug = require('debug');
 const { isProduction } = require('./config/keys');
 
+require('./models/User')
 
 //importing routes into app.js:
 const usersRouter = require('./routes/api/users');
@@ -46,6 +48,7 @@ app.use(
 app.use('/api/users', usersRouter); 
 app.use('/api/tweets', tweetsRouter)
 app.use('/api/csrf', csrfRouter)
+// app.use('/api/users/register', usersRouter)
 
 
 // Express custom middleware for catching all unmatched requests and formatting
