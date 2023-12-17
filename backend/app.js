@@ -10,14 +10,9 @@ const debug = require('debug');
 const { isProduction } = require('./config/keys');
 
 require('./models/User')
+require('./models/Tweet')
 require('./config/passport');
 const passport = require('passport')
-
-
-//importing routes into app.js:
-const usersRouter = require('./routes/api/users');
-const tweetsRouter = require('./routes/api/tweets');
-const csrfRouter =  require('./routes/api/csrf');
 
 const app = express();
 
@@ -48,12 +43,41 @@ app.use(
   })
 );
 
+//importing routes into app.js:
+const usersRouter = require('./routes/api/users');
+const tweetsRouter = require('./routes/api/tweets');
+const csrfRouter =  require('./routes/api/csrf');
+
+
 // Attach Express routers aka route handlers:
 app.use('/api/users', usersRouter); 
 app.use('/api/tweets', tweetsRouter)
 app.use('/api/csrf', csrfRouter)
 // app.use('/api/users/register', usersRouter)
 
+
+// Serve static React build files statically in production
+if (isProduction) {
+  const path = require('path');
+  // Serve the frontend's index.html file at the root route
+  app.get('/', (req, res) => {
+    res.cookie('CSRF-TOKEN', req.csrfToken());
+    res.sendFile(
+      path.resolve(__dirname, '../frontend', 'dist', 'index.html')
+    );
+  });
+
+  // Serve the static assets in the frontend's dist folder
+  app.use(express.static(path.resolve("../frontend/dist")));
+
+  // Serve the frontend's index.html file at all other routes NOT starting with /api
+  app.get(/^(?!\/?api).*/, (req, res) => {
+    res.cookie('CSRF-TOKEN', req.csrfToken());
+    res.sendFile(
+      path.resolve(__dirname, '../frontend', 'dist', 'index.html')
+    );
+  });
+}
 
 // Express custom middleware for catching all unmatched requests and formatting
 // a 404 error to be sent as the response.
