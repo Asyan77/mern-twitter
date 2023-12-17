@@ -8,27 +8,23 @@ async function jwtFetch(url, options = {}) {
     
     if (options.method.toUpperCase() !== "GET") {
       options.headers["Content-Type"] =
-        options.headers["Content-Type"] || "application/json";
-        options.headers["CSRF-Token"] = getCookie("CSRF-TOKEN");
+      options.headers["Content-Type"] || "application/json";
+      options.headers["CSRF-Token"] = getCookie("CSRF-TOKEN");
     }
   
     const res = await fetch(url, options);
-  
-    if (res.status >= 400) throw res;
-  
+    if (res.status >= 400) throw res;  
     return res;
   }
   
-  export default jwtFetch;
-
-
-
-
   export function getCookie(cookieName) {
     const cookies = document.cookie.split(';');
     for (let cookie of cookies) {
-        const [name, value] = cookie.split('=');
-        if (name.trim() === cookieName) return value;
+      const [name, value] = cookie.split('=');
+      if (name.trim() === cookieName) return value;
     }
     return null;
   }
+
+
+  export default jwtFetch;

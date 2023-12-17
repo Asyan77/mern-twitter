@@ -1,8 +1,14 @@
-import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
-import thunk from 'redux-thunk';
+import { applyMiddleware, compose, combineReducers } from 'redux';
+import {thunk} from 'redux-thunk';
+import session from "./session";
+import errors from "./errors";
+import tweets from "./tweets"
+import { legacy_createStore } from 'redux';
 
 const rootReducer = combineReducers({
-  // Add reducers here
+  session,
+  errors,
+  tweets
 });
 
 let enhancer;
@@ -16,7 +22,8 @@ if (import.meta.env.MODE === "production") {
 }
 
 const configureStore = (preloadedState) => {
-  return createStore(rootReducer, preloadedState, enhancer);
+  return legacy_createStore(rootReducer, preloadedState, enhancer);
 };
+
 
 export default configureStore;
